@@ -3,6 +3,7 @@
 
 # Author
 
+[Tuukka Tuominen](https://github.com/tuominentuukka)
 
 # Screenshots
 
