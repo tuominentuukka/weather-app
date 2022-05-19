@@ -1,43 +1,54 @@
 package com.example.weatherapp
 
-import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ListView
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.databind.ObjectMapper
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.concurrent.thread
-
-
-
+import org.json.JSONArray
+import org.json.JSONObject
+import org.json.JSONTokener
 
 
 class MainActivity : AppCompatActivity() {
-    lateinit var city: EditText
+    lateinit var searchCity: EditText
     lateinit var search: Button
+    lateinit var temperature: TextView
+    lateinit var city: TextView
+    lateinit var description: TextView
+
+    lateinit var jsonObject: JSONObject;
+    lateinit var coordOb: JSONObject
+    lateinit var weatherArray: JSONArray
+    lateinit var weatherOb: JSONObject
+    lateinit var windOb: JSONObject
+    lateinit var mainOb: JSONObject
+    lateinit var sysOb: JSONObject
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        city = findViewById(R.id.city)
+        searchCity = findViewById(R.id.searchCity)
         search = findViewById(R.id.search)
+        city = findViewById(R.id.city)
+        temperature = findViewById(R.id.temperature)
+        description = findViewById(R.id.description)
 
 
         search.setOnClickListener() {
             thread {
-                var cityString: String = city.text.toString()
+                var cityString: String = searchCity.text.toString()
                 var url= "https://api.openweathermap.org/data/2.5/weather?q=$cityString&units=metric&appid=41f2ffd1ca49bbba0e811bcfd6b53b27"
                 getUrl(url)
+                updateView()
             }
         }
 
@@ -49,11 +60,16 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         thread {
             getUrl("https://api.openweathermap.org/data/2.5/weather?q=tampere&units=metric&appid=41f2ffd1ca49bbba0e811bcfd6b53b27")
+            updateView()
         }
 
     }
 
-
+    fun updateView(){
+        city.text = jsonObject.get("name").toString()
+        temperature.text = mainOb.get("temp").toString()
+        description.text = weatherOb.get("description").toString()
+    }
 
     fun getUrl(url: String) {
         try {
@@ -71,13 +87,25 @@ class MainActivity : AppCompatActivity() {
                 } while (line != null)
                 result = sb.toString()
             }
-            println(result)
-
+            jsonObject = JSONTokener(result).nextValue() as JSONObject;
+            coordOb = jsonObject.get("coord") as JSONObject
+            weatherArray = jsonObject.getJSONArray("weather")
+            weatherOb = weatherArray.get(0) as JSONObject
+            windOb = jsonObject.get("wind") as JSONObject
+            mainOb = jsonObject.get("main") as JSONObject
+            sysOb = jsonObject.get("sys") as JSONObject
+            println(coordOb)
+            println(weatherOb)
+            println(windOb)
+            println(mainOb)
+            println(sysOb)
+            println(jsonObject)
         } catch (e: Exception){
             print(e.message)
         }
 
     }
+
 
     fun EditText.addMyKeyListener(afterTextChanged: (String) -> Unit) {
         this.addTextChangedListener(object : TextWatcher {
@@ -93,16 +121,3 @@ class MainActivity : AppCompatActivity() {
         })
     }
 }
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class WeatherItem(var coord: String? = null){
-
-    override fun toString(): String {
-        return "lon = $coord"
-
-    }
-}
-
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class Weather(var results: MutableList<WeatherItem>? = null)
