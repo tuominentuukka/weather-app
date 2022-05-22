@@ -5,16 +5,17 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import org.json.JSONArray
+import org.json.JSONObject
+import org.json.JSONTokener
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.concurrent.thread
-import org.json.JSONArray
-import org.json.JSONObject
-import org.json.JSONTokener
 
 
 class MainActivity : AppCompatActivity() {
@@ -22,7 +23,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var search: Button
     lateinit var temperature: TextView
     lateinit var city: TextView
-    lateinit var description: TextView
+    lateinit var wind: TextView
+
+    lateinit var imageView: ImageView
 
     lateinit var jsonObject: JSONObject;
     lateinit var coordOb: JSONObject
@@ -32,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var mainOb: JSONObject
     lateinit var sysOb: JSONObject
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -40,7 +44,14 @@ class MainActivity : AppCompatActivity() {
         search = findViewById(R.id.search)
         city = findViewById(R.id.city)
         temperature = findViewById(R.id.temperature)
-        description = findViewById(R.id.description)
+        wind = findViewById(R.id.wind)
+
+        imageView = findViewById(R.id.imageView)
+        //Glide.with(this).load("http://openweathermap.org/img/w/01d.png").into(imageView)
+
+        //Picasso.get().load("http://openweathermap.org/img/w/01d.png").into(imageView)
+
+
 
 
         search.setOnClickListener() {
@@ -54,12 +65,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
     override fun onResume() {
         //https://api.openweathermap.org/data/2.5/onecall?lat=61.4991&lon=23.7871&exclude=hourly,minutely&units=metric&appid=e25791362111e97f0444b9b2e69d610f
         //https://api.openweathermap.org/data/2.5/weather?q=tampere&units=metric&appid=41f2ffd1ca49bbba0e811bcfd6b53b27
         super.onResume()
         thread {
-            getUrl("https://api.openweathermap.org/data/2.5/weather?q=tampere&units=metric&appid=41f2ffd1ca49bbba0e811bcfd6b53b27")
+            getUrl("https://api.openweathermap.org/data/2.5/weather?q=tampere&units=metric&lang=fi&appid=41f2ffd1ca49bbba0e811bcfd6b53b27")
             updateView()
         }
 
@@ -67,8 +79,21 @@ class MainActivity : AppCompatActivity() {
 
     fun updateView(){
         city.text = jsonObject.get("name").toString()
-        temperature.text = mainOb.get("temp").toString()
-        description.text = weatherOb.get("description").toString()
+        temperature.text = mainOb.get("temp").toString() + " °C   " + weatherOb.get("description").toString()
+        wind.text = windOb.get("speed").toString() + " m/s"
+
+
+        when(weatherOb.getString("icon")){
+            "01d", "01n" -> imageView.setImageResource(R.drawable.sun)
+            "02d", "02n" -> imageView.setImageResource(R.drawable.half_cloydy)
+            "03d", "03n" -> imageView.setImageResource(R.drawable.cloudy)
+            "04d", "04n" -> imageView.setImageResource(R.drawable.half_cloydy)
+            "09d", "09n" -> imageView.setImageResource(R.drawable.shower_rain)
+            "10d", "10n" -> imageView.setImageResource(R.drawable.rain)
+            "11d", "11n" -> imageView.setImageResource(R.drawable.thunderstorm2)
+            "13d", "13n" -> imageView.setImageResource(R.drawable.snow)
+            "50d", "50n" -> imageView.setImageResource(R.drawable.mist2)
+        }
     }
 
     fun getUrl(url: String) {
@@ -94,6 +119,14 @@ class MainActivity : AppCompatActivity() {
             windOb = jsonObject.get("wind") as JSONObject
             mainOb = jsonObject.get("main") as JSONObject
             sysOb = jsonObject.get("sys") as JSONObject
+            val icon: String = weatherOb.getString("icon")
+            val iconUrl = "http://openweathermap.org/img/w/$icon.png"
+            println(iconUrl)
+
+            //Picasso.get().load(iconUrl).into(imageView)
+
+
+
             println(coordOb)
             println(weatherOb)
             println(windOb)

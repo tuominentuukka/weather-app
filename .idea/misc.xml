@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/koulu/weather-app/app/src/main/res/drawable-v24/sun_foreground.xml" value="0.2265" />
+        <entry key="..\:/koulu/weather-app/app/src/main/res/drawable/background.xml" value="0.2265" />
         <entry key="..\:/koulu/weather-app/app/src/main/res/layout/activity_main.xml" value="0.2608915906788247" />
         <entry key="..\:/koulu/weather-app/app/src/main/res/layout/item.xml" value="0.26773049645390073" />
       </map>
