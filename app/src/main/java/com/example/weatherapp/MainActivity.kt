@@ -1,12 +1,11 @@
 package com.example.weatherapp
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONArray
 import org.json.JSONObject
@@ -27,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var imageView: ImageView
 
-    lateinit var jsonObject: JSONObject;
+    lateinit var jsonObject: JSONObject
     lateinit var coordOb: JSONObject
     lateinit var weatherArray: JSONArray
     lateinit var weatherOb: JSONObject
@@ -36,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var sysOb: JSONObject
 
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -47,17 +47,12 @@ class MainActivity : AppCompatActivity() {
         wind = findViewById(R.id.wind)
 
         imageView = findViewById(R.id.imageView)
-        //Glide.with(this).load("http://openweathermap.org/img/w/01d.png").into(imageView)
-
-        //Picasso.get().load("http://openweathermap.org/img/w/01d.png").into(imageView)
-
-
 
 
         search.setOnClickListener() {
             thread {
-                var cityString: String = searchCity.text.toString()
-                var url= "https://api.openweathermap.org/data/2.5/weather?q=$cityString&units=metric&appid=41f2ffd1ca49bbba0e811bcfd6b53b27"
+                val cityString: String = searchCity.text.toString()
+                val url= "https://api.openweathermap.org/data/2.5/weather?q=$cityString&units=metric&appid=41f2ffd1ca49bbba0e811bcfd6b53b27"
                 getUrl(url)
                 updateView()
             }
@@ -67,8 +62,6 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onResume() {
-        //https://api.openweathermap.org/data/2.5/onecall?lat=61.4991&lon=23.7871&exclude=hourly,minutely&units=metric&appid=e25791362111e97f0444b9b2e69d610f
-        //https://api.openweathermap.org/data/2.5/weather?q=tampere&units=metric&appid=41f2ffd1ca49bbba0e811bcfd6b53b27
         super.onResume()
         thread {
             getUrl("https://api.openweathermap.org/data/2.5/weather?q=tampere&units=metric&lang=fi&appid=41f2ffd1ca49bbba0e811bcfd6b53b27")
@@ -112,29 +105,20 @@ class MainActivity : AppCompatActivity() {
                 } while (line != null)
                 result = sb.toString()
             }
-            jsonObject = JSONTokener(result).nextValue() as JSONObject;
+            jsonObject = JSONTokener(result).nextValue() as JSONObject
             coordOb = jsonObject.get("coord") as JSONObject
             weatherArray = jsonObject.getJSONArray("weather")
             weatherOb = weatherArray.get(0) as JSONObject
             windOb = jsonObject.get("wind") as JSONObject
             mainOb = jsonObject.get("main") as JSONObject
             sysOb = jsonObject.get("sys") as JSONObject
-            val icon: String = weatherOb.getString("icon")
-            val iconUrl = "http://openweathermap.org/img/w/$icon.png"
-            println(iconUrl)
 
-            //Picasso.get().load(iconUrl).into(imageView)
-
-
-
-            println(coordOb)
-            println(weatherOb)
-            println(windOb)
-            println(mainOb)
-            println(sysOb)
-            println(jsonObject)
         } catch (e: Exception){
             print(e.message)
+            runOnUiThread {
+                Toast.makeText(applicationContext, "sijaintia ei löydy", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
 
     }
@@ -154,3 +138,4 @@ class MainActivity : AppCompatActivity() {
         })
     }
 }
+
