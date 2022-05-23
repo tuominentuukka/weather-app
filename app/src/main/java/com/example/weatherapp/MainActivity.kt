@@ -50,12 +50,11 @@ class MainActivity : AppCompatActivity() {
 
 
         search.setOnClickListener() {
-            thread {
-                val cityString: String = searchCity.text.toString()
-                val url= "https://api.openweathermap.org/data/2.5/weather?q=$cityString&units=metric&appid=41f2ffd1ca49bbba0e811bcfd6b53b27"
-                getUrl(url)
-                updateView()
-            }
+            val cityString: String = searchCity.text.toString()
+            val url= "https://api.openweathermap.org/data/2.5/weather?q=$cityString&units=metric&lang=fi&appid=41f2ffd1ca49bbba0e811bcfd6b53b27"
+            getUrl(url)
+            
+
         }
 
     }
@@ -63,10 +62,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        thread {
-            getUrl("https://api.openweathermap.org/data/2.5/weather?q=tampere&units=metric&lang=fi&appid=41f2ffd1ca49bbba0e811bcfd6b53b27")
-            updateView()
-        }
+
+        getUrl("https://api.openweathermap.org/data/2.5/weather?q=tampere&units=metric&lang=fi&appid=41f2ffd1ca49bbba0e811bcfd6b53b27")
+
 
     }
 
@@ -90,34 +88,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getUrl(url: String) {
-        try {
-            var result: String? = null
-            val sb = StringBuffer()
-            val myUrl = URL(url)
-            val connection = myUrl.openConnection() as HttpURLConnection
-            val reader = BufferedReader(InputStreamReader(connection.inputStream))
+        thread {
+            try {
+                var result: String?
+                val sb = StringBuffer()
+                val myUrl = URL(url)
+                val connection = myUrl.openConnection() as HttpURLConnection
+                val reader = BufferedReader(InputStreamReader(connection.inputStream))
 
-            reader.use {
-                var line: String? = null
-                do {
-                    line = it.readLine()
-                    sb.append(line)
-                } while (line != null)
-                result = sb.toString()
-            }
-            jsonObject = JSONTokener(result).nextValue() as JSONObject
-            coordOb = jsonObject.get("coord") as JSONObject
-            weatherArray = jsonObject.getJSONArray("weather")
-            weatherOb = weatherArray.get(0) as JSONObject
-            windOb = jsonObject.get("wind") as JSONObject
-            mainOb = jsonObject.get("main") as JSONObject
-            sysOb = jsonObject.get("sys") as JSONObject
+                reader.use {
+                    var line: String?
+                    do {
+                        line = it.readLine()
+                        sb.append(line)
+                    } while (line != null)
+                    result = sb.toString()
+                }
+                jsonObject = JSONTokener(result).nextValue() as JSONObject
+                coordOb = jsonObject.get("coord") as JSONObject
+                weatherArray = jsonObject.getJSONArray("weather")
+                weatherOb = weatherArray.get(0) as JSONObject
+                windOb = jsonObject.get("wind") as JSONObject
+                mainOb = jsonObject.get("main") as JSONObject
+                sysOb = jsonObject.get("sys") as JSONObject
+                updateView()
 
-        } catch (e: Exception){
-            print(e.message)
-            runOnUiThread {
-                Toast.makeText(applicationContext, "sijaintia ei löydy", Toast.LENGTH_SHORT)
-                    .show()
+            } catch (e: Exception) {
+                print(e.message)
+                runOnUiThread {
+                    Toast.makeText(applicationContext, "sijaintia ei löydy", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
         }
 
