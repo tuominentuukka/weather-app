@@ -52,8 +52,8 @@ class MainActivity : AppCompatActivity() {
         search.setOnClickListener() {
             val cityString: String = searchCity.text.toString()
             val url= "https://api.openweathermap.org/data/2.5/weather?q=$cityString&units=metric&lang=fi&appid=41f2ffd1ca49bbba0e811bcfd6b53b27"
-            getUrl(url)
-            
+            DownloadData(url)
+
 
         }
 
@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        getUrl("https://api.openweathermap.org/data/2.5/weather?q=tampere&units=metric&lang=fi&appid=41f2ffd1ca49bbba0e811bcfd6b53b27")
+        DownloadData("https://api.openweathermap.org/data/2.5/weather?q=tampere&units=metric&lang=fi&appid=41f2ffd1ca49bbba0e811bcfd6b53b27")
 
 
     }
@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun getUrl(url: String) {
+    fun DownloadData(url: String) {
         thread {
             try {
                 var result: String?
