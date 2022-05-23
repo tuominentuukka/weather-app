@@ -21,4 +21,4 @@ Mobile application for android devices that displays weather information.
 
 # Screencast
 
-> updated when project finishes
+[Youtube](https://www.youtube.com/watch?v=nVQifyXUWf8)
