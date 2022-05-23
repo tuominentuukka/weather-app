@@ -9,8 +9,11 @@ Mobile application for android devices that displays weather information.
 [Tuukka Tuominen](https://github.com/tuominentuukka)
 
 # Screenshots
-
-> Updated when project finishes
+<p float="left">
+<img src="https://user-images.githubusercontent.com/77830209/169704703-4cdefbe7-65b9-4e16-bb65-c6812f4ed8bb.png" width="200">
+<img src="https://user-images.githubusercontent.com/77830209/169704705-1a0e68b5-6fc7-4949-a483-ac71aa5c9011.png" width="200">
+<img src="https://user-images.githubusercontent.com/77830209/169704706-96d46285-8f36-4707-be0e-b9f286c1941d.png" width="200">
+ </p>
 
 # Technology
 
