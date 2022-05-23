@@ -1,7 +1,6 @@
 # weather-app
 
 Mobile application for android devices that displays weather information.
-- with your current location.
 - search to show any location.
 
 # Author
